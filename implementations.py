@@ -137,6 +137,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
 
     # Initialize weights and loss
     w = initial_w
+    print(w)
     loss = compute_loss(y, tx, w, "log")
 
     for i in range(max_iters):
