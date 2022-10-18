@@ -177,7 +177,7 @@ def reg_logistic_regression(y, tx, lamda_, initial_w, max_iters, gamma):
 
     # Initialize weights and loss
     w = initial_w
-    loss = compute_loss(y, tx, w, "log") + lamda_ * np.sum(w**2)
+    loss = compute_loss(y, tx, w, "log")
 
     for i in range(max_iters):
 
