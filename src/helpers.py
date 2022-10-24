@@ -36,3 +36,8 @@ def create_csv_submission(ids, y_pred, name):
         writer.writeheader()
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({"Id": int(r1), "Prediction": int(r2)})
+            
+            
+def normalize_dat(x):
+    normalized = (x-np.mean(x, axis=0))/np.std(x, axis=0)
+    return normalized

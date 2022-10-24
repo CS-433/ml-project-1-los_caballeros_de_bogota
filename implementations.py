@@ -191,11 +191,7 @@ def reg_logistic_regression(y, tx, lamda_, initial_w, max_iters, gamma):
         loss = compute_loss(y, tx, w, "log")
 
         # Display current loss and weights
-        print(
-            "GD iter. {bi}/{ti}: loss={l}, w0={w0}, w1={w1}".format(
-                bi=i, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]
-            )
-        )
+        
     return w, loss
 
 
@@ -299,3 +295,5 @@ def batch_iter(y, tx, batch_size=1, num_batches=1, shuffle=True):
         end_index = min((batch_num + 1) * batch_size, data_size)
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
+
+
