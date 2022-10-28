@@ -7,9 +7,12 @@ def clean_data(x, mod):
         x[mask] = 0
         means = np.mean(x, axis=0, where=np.logical_not(mask))
         return x + np.tile(means, (x.shape[0], 1)) * mask
-
-    elif mod == "nn":
-        pass
+    
+    if mod == "med":
+        mask = x == -999.0
+        x[mask] = 0
+        medians = np.median(x[np.logical_not(mask)], axis=0)
+        return x + np.tile(medians, (x.shape[0], 1)) * mask
 
 
 def normalize_data(x):
