@@ -32,12 +32,8 @@ def mean_squared_error_gd(y, tx, initial_w, max_iters, gamma):
         # compute loss
         loss = compute_loss(y, tx, w, "mse")
 
-        # Display current loss and weights
-        print(
-            "GD iter. {bi}/{ti}: loss={l}, w0={w0}, w1={w1}".format(
-                bi=i, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]
-            )
-        )
+        # Display current loss
+        print("GD iter. {bi}/{ti}: loss={l}".format(bi=i, ti=max_iters - 1, l=loss))
 
     return w, loss
 
@@ -73,11 +69,9 @@ def mean_squared_error_sgd(y, tx, initial_w, max_iters, gamma):
             # calculate loss
             loss = compute_loss(y, tx, w, "mse")
 
-        # Display current loss and weights
+        # Display current loss
         print(
-            "SGD iter. {bi}/{ti}: loss={l}, w0={w0}, w1={w1}".format(
-                bi=n_iter, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]
-            )
+            "SGD iter. {bi}/{ti}: loss={l}".format(bi=n_iter, ti=max_iters - 1, l=loss)
         )
 
     return w, loss
@@ -150,10 +144,10 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         # calculate loss
         loss = compute_loss(y, tx, w, "log")
 
-        # Display current loss and weights
+        # Display current loss
         print(
             "GD iter. {bi}/{ti}: loss={l}, w0={w0}, w1={w1}".format(
-                bi=i, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]
+                bi=i, ti=max_iters - 1, l=loss
             )
         )
     return w, loss
@@ -191,11 +185,7 @@ def reg_logistic_regression(y, tx, lamda_, initial_w, max_iters, gamma):
         loss = compute_loss(y, tx, w, "log")
 
         # Display current loss and weights
-        print(
-            "GD iter. {bi}/{ti}: loss={l}, w0={w0}, w1={w1}".format(
-                bi=i, ti=max_iters - 1, l=loss, w0=w[0], w1=w[1]
-            )
-        )
+        print("GD iter. {bi}/{ti}: loss={l}".format(bi=i, ti=max_iters - 1, l=loss))
     return w, loss
 
 
