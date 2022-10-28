@@ -18,7 +18,7 @@ if __name__ == "__main__":
     y, x, ids_train = load_csv_data(DATA_PATH + "train.csv", sub_sample=False)
     y[y == -1] = 0
 
-    x = clean_data(x, mod="mean")
+    x = clean_data(x, mod="med")
     x = normalize_data(x)
     x_tr, x_te, y_tr, y_te = split_data(x, y, ratio=0.75)
 
