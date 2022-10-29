@@ -17,8 +17,8 @@ class Model:
         self.acc_te = []
         self.f1 = []
 
-    def train(self, y_tr, x_tr, y_te, x_te, max_iters, gamma):
-        """Train model with Logistic regression using GD
+    def train(self, y_tr, x_tr, y_te, x_te, max_iters, gamma, lambda_):
+        """Train model with regularized logistic regression using GD
         Args:
         """
 
@@ -31,7 +31,7 @@ class Model:
 
         for epoch in range(1, max_iters + 1):
             # compute gradient
-            grad = compute_gradient(y_tr, x_tr, self.weights, "log")
+            grad = compute_gradient(y_tr, x_tr, self.weights, "log", lambda_=lambda_)
 
             # update w through the stochastic gradient update
             self.weights = self.weights - gamma * grad

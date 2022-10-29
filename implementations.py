@@ -146,14 +146,14 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
 
         # Display current loss
         print(
-            "GD iter. {bi}/{ti}: loss={l}, w0={w0}, w1={w1}".format(
+            "GD iter. {bi}/{ti}: loss={l}".format(
                 bi=i, ti=max_iters - 1, l=loss
             )
         )
     return w, loss
 
 
-def reg_logistic_regression(y, tx, lamda_, initial_w, max_iters, gamma):
+def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     """Regularized logistic regression using GD
 
     Args:
@@ -176,7 +176,7 @@ def reg_logistic_regression(y, tx, lamda_, initial_w, max_iters, gamma):
     for i in range(max_iters):
 
         # compute gradient
-        grad = compute_gradient(y, tx, w, "log", lambda_=lamda_)
+        grad = compute_gradient(y, tx, w, "log", lambda_=lambda_)
 
         # update w through the stochastic gradient update
         w = w - gamma * grad

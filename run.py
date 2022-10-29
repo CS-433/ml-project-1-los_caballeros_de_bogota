@@ -30,7 +30,8 @@ if __name__ == "__main__":
     model = Model(np.random.uniform(-1, 1, size=tx_tr.shape[1]))
     max_iters = 500
     gamma = 0.1
-    model.train(y_tr, tx_tr, y_te, tx_te, max_iters, gamma)
+    lambda_ = 0.1
+    model.train(y_tr, tx_tr, y_te, tx_te, max_iters, gamma, lambda_)
 
     # Plot performance:
     plot_performance(model)
