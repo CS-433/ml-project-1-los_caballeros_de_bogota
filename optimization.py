@@ -1,11 +1,10 @@
+import pickle
 import numpy as np 
 from src.model import Model
 from src.helpers import load_csv_data
-from src.utils import cross_validation_visualization 
 from src.data_processing import (
-    clean_data,
     normalize_data,
-    build_poly
+    filter_data
 )
 
 DATA_PATH = "data/"
@@ -30,7 +29,7 @@ def build_k_indices(y, k_fold, seed):
     return np.array(k_indices)
 
 
-def cross_validation(y, x, k_indices, k, lambda_, degree):
+def cross_validation(y, x, k_indices, k, lambda_, degree, mean, std):
     """return the loss of regularized logistic regression for a fold corresponding to k_indices
     
     Args:
@@ -52,21 +51,16 @@ def cross_validation(y, x, k_indices, k, lambda_, degree):
     
     x_tr = np.delete(x, k_indices[k], axis=0)
     y_tr = np.delete(y, k_indices[k], axis=0)
-
-    # Form data with polynomial degree:
-    tx_te = build_poly(x_te, degree)
-    tx_tr = build_poly(x_tr, degree)
-
+    
     # Train model:
-    np.random.seed(1)
-    model = Model(np.random.uniform(-1, 1, size=tx_tr.shape[1]), max_iters=10, gamma=0.1, lambda_=lambda_)
-    model.train(y_tr, tx_tr, y_te, tx_te)
+    model = Model(max_iters=2, gamma=0.1, mean=mean, std=std, degree=degree, lambda_=lambda_)
+    model.train(y_tr, x_tr, y_te, x_te)
     
     # Return loss for train and test data: 
     return model.loss_tr[-1], model.loss_te[-1]
 
 
-def best_params_selection(y, x, degrees, k_fold, lambdas, seed = 1):
+def best_params_selection(y, x, degrees, k_fold, lambdas, mean, std, seed = 1):
     """cross validation over regularisation parameter lambda and degree.
     
     Args:
@@ -93,7 +87,7 @@ def best_params_selection(y, x, degrees, k_fold, lambdas, seed = 1):
             loss_tr_k = []
             loss_te_k = []
             for k in range(k_fold):
-                loss_tr, loss_te = cross_validation(y, x, k_indices, k, lambda_, degree)
+                loss_tr, loss_te = cross_validation(y, x, k_indices, k, lambda_, degree, mean, std)
                 loss_tr_k.append(loss_tr)
                 loss_te_k.append(loss_te)
             
@@ -105,62 +99,48 @@ def best_params_selection(y, x, degrees, k_fold, lambdas, seed = 1):
     best_lambda = lambdas[min_idx[1]]
     best_loss = np.min(final_loss_te) 
     
-    #cross_validation_visualization(lambdas, degrees, final_loss_te)
-    
     return best_degree, best_lambda, best_loss
 
 
 if __name__  == '__main__':
     # Load and prepare data for training:
-    y, x, ids_train = load_csv_data(DATA_PATH + "train.csv", sub_sample=False)
+    y, x, ids= load_csv_data(DATA_PATH + "train.csv", sub_sample=False)
     y[y == -1] = 0
-
-    x = clean_data(x, mod="mean")
-    x = normalize_data(x)
     
-    degrees =  np.arange(1,3)
-    lambdas = np.logspace(-4, 0, 3)
-    best_degree, best_lambda, best_rmse = best_params_selection(y, x, degrees=degrees, lambdas=lambdas, k_fold=4)
-    print("The best test loss of %.3f is obtained for a degree of %.f and a lambda of %.5f." % (best_rmse, best_degree, best_lambda))
-
-
-# def best_lambda_selection(y, x, degree, k_fold, lambdas):
-#     """cross validation over regularisation parameter lambda.
+    data = filter_data(y, x, ids)
+    models = {'no_mass': {'jet0': [], 
+                'jet1': [], 
+                'jet2': [], 
+                'jet3': []},
+    'mass': {'jet0': [], 
+            'jet1': [], 
+            'jet2': [], 
+                'jet3': []}}
     
-#     Args:
-#         degree: integer, degree of the polynomial expansion
-#         k_fold: integer, the number of folds
-#         lambdas: shape = (p, ) where p is the number of values of lambda to test
-#     Returns:
-#         best_lambda : scalar, value of the best lambda
-#         best_loss : scalar, the associated Log-loss for the best lambda
-#     """
+    params = {'no_mass': {'jet0': {'degree':[], 'lambda_':[]}, 
+                    'jet1': {'degree':[], 'lambda_':[]}, 
+                    'jet2': {'degree':[], 'lambda_':[]}, 
+                    'jet3': {'degree':[], 'lambda_':[]}},
+        'mass': {'jet0': {'degree':[], 'lambda_':[]}, 
+                'jet1': {'degree':[], 'lambda_':[]}, 
+                'jet2': {'degree':[], 'lambda_':[]}, 
+                'jet3': {'degree':[], 'lambda_':[]}}}
     
-#     seed = 12
+    for key1, value1 in data.items():
+        for key2, value2 in value1.items():
+            print('Cross-validation for model {}-{}:'.format(key1, key2))
+            x = data[key1][key2]['x']
+            y = data[key1][key2]['y']
+            x, mean, std = normalize_data(x)
+            
+            degrees =  np.arange(1,3)
+            lambdas = np.logspace(-4, 0, 3)
+            best_degree, best_lambda, best_loss = best_params_selection(y, x, degrees=degrees, lambdas=lambdas, k_fold=4, mean=mean, std=std)
+            print("The best test loss of %.3f is obtained for a degree of %.f and a lambda of %.5f.\n" % (best_loss, best_degree, best_lambda))
+            
+            params[key1][key2]['degree'] = best_degree
+            params[key1][key2]['lambda_'] = best_lambda
     
-#     # Split data in k fold
-#     k_indices = build_k_indices(y, k_fold, seed)
-    
-#     # Define lists to store the final log-loss of training data and test data
-#     final_loss_tr = []
-#     final_loss_te = []
-    
-#     # cross validation over lambdas:
-#     for lambda_ in lambdas:
-        
-#         loss_tr_k = []
-#         loss_te_k = []
-#         for k in range(k_fold):
-#             loss_tr, loss_te = cross_validation(y, x, k_indices, k, lambda_, degree)
-#             loss_tr_k.append(loss_tr)
-#             loss_te_k.append(loss_te)
-        
-#         final_loss_tr.append(np.mean(loss_tr_k))
-#         final_loss_te.append(np.mean(loss_te_k))
-    
-#     best_lambda = lambdas[np.argmin(final_loss_te)]
-#     best_loss = np.min(final_loss_te)
-    
-#     cross_validation_visualization(lambdas, final_loss_tr, final_loss_te)
-#     print("For polynomial expansion up to degree %.f, the choice of lambda which leads to the best test loss is %.5f with a test loss of %.3f" % (degree, best_lambda, best_loss))
-#     return best_lambda, best_loss
+    with open('src/best_params.pkl', 'wb') as f:
+        pickle.dump(params, f)
+    print("Best parameters saved at 'src/best_params.pkl'.")

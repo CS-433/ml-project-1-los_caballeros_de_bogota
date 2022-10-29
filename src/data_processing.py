@@ -58,20 +58,6 @@ def filter_data(y, x, ids):
     return data
 
 
-def clean_data(x, mod):
-    if mod == "mean":
-        mask = x == -999.0
-        x[mask] = 0
-        means = np.mean(x, axis=0, where=np.logical_not(mask))
-        return x + np.tile(means, (x.shape[0], 1)) * mask
-    
-    if mod == "med":
-        mask = x == -999.0
-        x[mask] = 0
-        medians = np.median(x[np.logical_not(mask)], axis=0)
-        return x + np.tile(medians, (x.shape[0], 1)) * mask
-
-
 def normalize_data(x):
     mean = np.mean(x, axis=0)
     std = np.std(x, axis=0)
@@ -128,3 +114,17 @@ def build_poly(x, degree):
     poly = poly ** np.repeat(np.arange(degree + 1), x.shape[1])
 
     return poly
+
+
+def clean_data(x, mod):
+    if mod == "mean":
+        mask = x == -999.0
+        x[mask] = 0
+        means = np.mean(x, axis=0, where=np.logical_not(mask))
+        return x + np.tile(means, (x.shape[0], 1)) * mask
+    
+    if mod == "med":
+        mask = x == -999.0
+        x[mask] = 0
+        medians = np.median(x[np.logical_not(mask)], axis=0)
+        return x + np.tile(medians, (x.shape[0], 1)) * mask

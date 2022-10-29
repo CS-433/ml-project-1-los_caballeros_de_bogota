@@ -1,3 +1,4 @@
+import pickle
 import numpy as np
 from src.model import Model
 from src.utils import plot_performance
@@ -26,6 +27,9 @@ if __name__ == "__main__":
                 'jet2': [], 
                 'jet3': []}}
     
+    with open('src/best_params.pkl', 'rb') as f:
+        params = pickle.load(f)
+    
     for key1, value1 in data.items():
         for key2, value2 in value1.items():
             
@@ -36,8 +40,11 @@ if __name__ == "__main__":
 
             # Training:
             print('Train model for sample {}-{}:'.format(key1, key2))
-            np.random.seed(1)
-            model = Model(max_iters=100, gamma=0.1, mean=mean, std=std, degree=2, lambda_=0.1)
+            
+            degree = params[key1][key2]['degree']
+            lambda_ = params[key1][key2]['lambda_']
+            
+            model = Model(max_iters=100, gamma=0.1, mean=mean, std=std, degree=degree, lambda_=lambda_)
             model.train(y_tr, x_tr, y_te, x_te)
 
             # Print performance:

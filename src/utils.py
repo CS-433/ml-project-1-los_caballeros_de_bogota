@@ -109,36 +109,3 @@ def plot_performance(model):
     ax2.legend(["Training accuracy", "Testing accuracy", "F1-score"])
     ax2.grid(True)
     plt.show()
-
-
-# def cross_validation_visualization(lambdas, loss_tr, loss_te):
-#     plt.semilogx(lambdas, loss_tr, marker=".", color='b', label='train error')
-#     plt.semilogx(lambdas, loss_te, marker=".", color='r', label='test error')
-#     plt.xlabel("lambda")
-#     plt.ylabel("Log-loss")
-#     plt.title("Cross validation")
-#     plt.legend(loc=2)
-#     plt.grid(True)
-#     plt.show()
-
-
-# def cross_validation_visualization(lambdas, degrees, loss_te):
-#     # centers = [lambdas[0], lambdas[-1], degrees[-1], degrees[0]]
-#     # dx, = np.diff(centers[:2])/(loss_te.shape[1]-1)
-#     # dy, = -np.diff(centers[2:])/(loss_te.shape[0]-1)
-#     # extent = [centers[0]-dx/2, centers[1]+dx/2, centers[2]+dy/2, centers[3]-dy/2]
-
-#     # plt.imshow(loss_te, extent=extent, cmap='jet')
-#     # plt.colorbar()
-#     # plt.xscale('log')
-#     # plt.axis('equal')
-#     # plt.xticks(lambdas)
-#     # np.logspace(-4, 0, 3)
-#     # plt.yticks(np.arange(centers[3], centers[2]+dy, dy))
-#     # plt.show()
-    
-#     plt.figure()
-#     #plt.xscale('log')
-#     plt.pcolor(lambdas, degrees, loss_te, cmap='jet')
-#     plt.colorbar()
-#     plt.show()

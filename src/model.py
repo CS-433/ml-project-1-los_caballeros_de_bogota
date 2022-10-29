@@ -32,6 +32,7 @@ class Model:
         x_te = build_poly(x_te, self.degree)
         
         # Initialize weights:
+        np.random.seed(1)
         self.weights = np.random.uniform(-1, 1, size=x_tr.shape[1])
         
         # Initialize loss, accuracy and f1-score:
