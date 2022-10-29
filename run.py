@@ -6,7 +6,7 @@ from src.data_processing import (
     clean_data,
     normalize_data,
     split_data,
-    build_poly,
+    build_poly
 )
 
 DATA_PATH = "data/"
@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     # Training:
     np.random.seed(1)
-    model = Model(np.random.uniform(-1, 1, size=tx_tr.shape[1]), max_iters=500, gamma=0.1, lambda_=0.1)
+    model = Model(np.random.uniform(-1, 1, size=tx_tr.shape[1]), max_iters=10, gamma=0.1, lambda_=0.1)
     model.train(y_tr, tx_tr, y_te, tx_te)
 
     # Plot performance:
@@ -38,13 +38,13 @@ if __name__ == "__main__":
         )
     )
 
-    # Create submission:
-    y_test, x_test, ids_test = load_csv_data(DATA_PATH + "test.csv", sub_sample=False)
-    x_test = clean_data(x_test, mod="mean")
-    x_test = normalize_data(x_test)
-    tx_test = build_poly(x_test, 2)
+    # # Create submission:
+    # y_test, x_test, ids_test = load_csv_data(DATA_PATH + "test.csv", sub_sample=False)
+    # x_test = clean_data(x_test, mod="mean")
+    # x_test = normalize_data(x_test)
+    # tx_test = build_poly(x_test, 2)
     
-    y_pred = model.predict(tx_test)
-    y_pred[y_pred == 0] = -1
-    create_csv_submission(ids_test, y_pred, DATA_PATH + "submission.csv")
-    print("Submission saved at 'data/submission.csv'.")
+    # y_pred = model.predict(tx_test)
+    # y_pred[y_pred == 0] = -1
+    # create_csv_submission(ids_test, y_pred, DATA_PATH + "submission.csv")
+    # print("Submission saved at 'data/submission.csv'.")
