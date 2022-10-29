@@ -42,7 +42,7 @@ if __name__ == "__main__":
     y_test, x_test, ids_test = load_csv_data(DATA_PATH + "test.csv", sub_sample=False)
     x_test = clean_data(x_test, mod="mean")
     x_test = normalize_data(x_test)
-    tx_test = augment_features(x_test)
+    tx_test = build_poly(x_test, 2)
     
     y_pred = model.predict(tx_test)
     y_pred[y_pred == 0] = -1
