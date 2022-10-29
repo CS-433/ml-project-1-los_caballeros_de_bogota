@@ -1,6 +1,53 @@
 import numpy as np
 
 
+def filter_data(y, x):
+    data = {'no_mass': {'jet0': {'x':[], 'y':[]}, 
+                        'jet1': {'x':[], 'y':[]}, 
+                        'jet2': {'x':[], 'y':[]}, 
+                        'jet3': {'x':[], 'y':[]}},
+            'mass': {'jet0': {'x':[], 'y':[]}, 
+                    'jet1': {'x':[], 'y':[]}, 
+                    'jet2': {'x':[], 'y':[]}, 
+                    'jet3': {'x':[], 'y':[]}}}
+    
+    mask = x[:,0] == -999.0
+    x_no_mass = x[mask,:]
+    y_no_mass = y[mask]
+    x_mass = x[np.logical_not(mask),:]
+    y_mass = y[np.logical_not(mask)]
+    
+    data['mass']['jet0']['x'] = x_mass[x_mass[:,22]==0,:]
+    data['mass']['jet0']['y'] = y_mass[x_mass[:,22]==0]
+    data['no_mass']['jet0']['x'] = x_no_mass[x_no_mass[:,22]==0,:]
+    data['no_mass']['jet0']['y'] = y_no_mass[x_no_mass[:,22]==0]
+    data['mass']['jet0']['x'] = np.delete(data['mass']['jet0']['x'], [4,5,6,12,22,23,24,25,26,27,28,29], axis=1)
+    data['no_mass']['jet0']['x'] = np.delete(data['no_mass']['jet0']['x'], [0,4,5,6,12,22,23,24,25,26,27,28,29], axis=1)
+    
+    data['mass']['jet1']['x'] = x_mass[x_mass[:,22]==1,:]
+    data['mass']['jet1']['y'] = y_mass[x_mass[:,22]==1]
+    data['no_mass']['jet1']['x'] = x_no_mass[x_no_mass[:,22]==1,:]
+    data['no_mass']['jet1']['y'] = y_no_mass[x_no_mass[:,22]==1]
+    data['mass']['jet1']['x'] = np.delete(data['mass']['jet1']['x'], [4,5,6,12,22,26,27,28], axis=1)
+    data['no_mass']['jet1']['x'] = np.delete(data['no_mass']['jet1']['x'], [0,4,5,6,12,22,26,27,28], axis=1)
+    
+    data['mass']['jet2']['x'] = x_mass[x_mass[:,22]==2,:]
+    data['mass']['jet2']['y'] = y_mass[x_mass[:,22]==2]
+    data['no_mass']['jet2']['x'] = x_no_mass[x_no_mass[:,22]==2,:]
+    data['no_mass']['jet2']['y'] = y_no_mass[x_no_mass[:,22]==2]
+    data['mass']['jet2']['x'] = np.delete(data['mass']['jet2']['x'], [22], axis=1)
+    data['no_mass']['jet2']['x'] = np.delete(data['no_mass']['jet2']['x'], [0,22], axis=1)
+    
+    data['mass']['jet3']['x'] = x_mass[x_mass[:,22]==3,:]
+    data['mass']['jet3']['y'] = y_mass[x_mass[:,22]==3]
+    data['no_mass']['jet3']['x'] = x_no_mass[x_no_mass[:,22]==3,:]
+    data['no_mass']['jet3']['y'] = y_no_mass[x_no_mass[:,22]==3]
+    data['mass']['jet3']['x'] = np.delete(data['mass']['jet3']['x'], [22], axis=1)
+    data['no_mass']['jet3']['x'] = np.delete(data['no_mass']['jet3']['x'], [0,22], axis=1)
+    
+    return data
+
+
 def clean_data(x, mod):
     if mod == "mean":
         mask = x == -999.0
@@ -16,8 +63,10 @@ def clean_data(x, mod):
 
 
 def normalize_data(x):
-    normalized = (x - np.mean(x, axis=0)) / np.std(x, axis=0)
-    return normalized
+    mean = np.mean(x, axis=0)
+    std = np.std(x, axis=0)
+    normalized = (x - mean) / std
+    return normalized, mean, std
 
 
 def split_data(x, y, ratio, seed=1):
