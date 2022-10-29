@@ -29,7 +29,7 @@ def build_k_indices(y, k_fold, seed):
     return np.array(k_indices)
 
 
-def cross_validation(y, x, k_indices, k, lambda_, degree, mean, std):
+def cross_validation(y, x, k_indices, k, lambda_, degree):
     """return the loss of regularized logistic regression for a fold corresponding to k_indices
     
     Args:
@@ -53,14 +53,14 @@ def cross_validation(y, x, k_indices, k, lambda_, degree, mean, std):
     y_tr = np.delete(y, k_indices[k], axis=0)
     
     # Train model:
-    model = Model(max_iters=2, gamma=0.1, mean=mean, std=std, degree=degree, lambda_=lambda_)
+    model = Model(max_iters=2, gamma=0.1, degree=degree, lambda_=lambda_)
     model.train(y_tr, x_tr, y_te, x_te)
     
     # Return loss for train and test data: 
     return model.loss_tr[-1], model.loss_te[-1]
 
 
-def best_params_selection(y, x, degrees, k_fold, lambdas, mean, std, seed = 1):
+def best_params_selection(y, x, degrees, k_fold, lambdas, seed = 1):
     """cross validation over regularisation parameter lambda and degree.
     
     Args:
@@ -87,7 +87,7 @@ def best_params_selection(y, x, degrees, k_fold, lambdas, mean, std, seed = 1):
             loss_tr_k = []
             loss_te_k = []
             for k in range(k_fold):
-                loss_tr, loss_te = cross_validation(y, x, k_indices, k, lambda_, degree, mean, std)
+                loss_tr, loss_te = cross_validation(y, x, k_indices, k, lambda_, degree)
                 loss_tr_k.append(loss_tr)
                 loss_te_k.append(loss_te)
             
@@ -104,7 +104,7 @@ def best_params_selection(y, x, degrees, k_fold, lambdas, mean, std, seed = 1):
 
 if __name__  == '__main__':
     # Load and prepare data for training:
-    y, x, ids= load_csv_data(DATA_PATH + "train.csv", sub_sample=False)
+    y, x, ids= load_csv_data(DATA_PATH + "train.csv", sub_sample=True)
     y[y == -1] = 0
     
     data = filter_data(y, x, ids)
@@ -135,7 +135,7 @@ if __name__  == '__main__':
             
             degrees =  np.arange(1,3)
             lambdas = np.logspace(-4, 0, 3)
-            best_degree, best_lambda, best_loss = best_params_selection(y, x, degrees=degrees, lambdas=lambdas, k_fold=4, mean=mean, std=std)
+            best_degree, best_lambda, best_loss = best_params_selection(y, x, degrees=degrees, lambdas=lambdas, k_fold=4)
             print("The best test loss of %.3f is obtained for a degree of %.f and a lambda of %.5f.\n" % (best_loss, best_degree, best_lambda))
             
             params[key1][key2]['degree'] = best_degree

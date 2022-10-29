@@ -1,5 +1,6 @@
+from locale import normalize
 import numpy as np
-from src.data_processing import build_poly
+from src.data_processing import build_poly, normalize_data
 from src.utils import (
     sigmoid,
     compute_loss,
@@ -10,11 +11,9 @@ from src.utils import (
 
 
 class Model:
-    def __init__(self, max_iters, gamma, mean, std, degree, lambda_=0.0):
+    def __init__(self, max_iters, gamma, degree, lambda_=0.0):
         self.max_iters = max_iters
         self.gamma = gamma 
-        self.mean = mean
-        self.std = std
         self.degree = degree
         self.lambda_ = lambda_
         self.loss_tr = []
@@ -30,6 +29,10 @@ class Model:
         # Feature augmentation:
         x_tr = build_poly(x_tr, self.degree)
         x_te = build_poly(x_te, self.degree)
+        
+        # Normalize data:
+        x_tr[:,x_tr.shape[1]:], self.mean, self.std = normalize_data(x_tr[:,x_tr.shape[1]:])
+        x_te[:,x_te.shape[1]:] = (x_te[:,x_te.shape[1]:] - self.mean)/self.std
         
         # Initialize weights:
         np.random.seed(1)
@@ -66,8 +69,8 @@ class Model:
 
     def predict(self, x, eval_mode=False):
         if eval_mode:
-            x = (x - self.mean)/self.std
             x = build_poly(x, self.degree)
+            x = (x - self.mean)/self.std
         
         y_pred = np.empty_like(x @ self.weights)
         y_pred[sigmoid(x @ self.weights) > 0.5] = 1
