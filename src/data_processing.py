@@ -54,11 +54,6 @@ def split_data(x, y, ratio, seed=1):
     return x_tr, x_te, y_tr, y_te
 
 
-def augment_features(x):
-    tx = build_poly(x, 2)
-    return tx
-
-
 def build_poly(x, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree.
 

@@ -9,15 +9,18 @@ from src.utils import (
 
 
 class Model:
-    def __init__(self, weights):
+    def __init__(self, weights, max_iters, gamma, lambda_=0.0):
         self.weights = weights
+        self.max_iters = max_iters
+        self.gamma = gamma 
+        self.lambda_ = lambda_
         self.loss_tr = []
         self.loss_te = []
         self.acc_tr = []
         self.acc_te = []
         self.f1 = []
 
-    def train(self, y_tr, x_tr, y_te, x_te, max_iters, gamma, lambda_):
+    def train(self, y_tr, x_tr, y_te, x_te):
         """Train model with regularized logistic regression using GD
         Args:
         """
@@ -27,14 +30,14 @@ class Model:
         self.acc_tr.append(compute_accuracy(y_tr, self.predict(x_tr)))
         self.acc_te.append(compute_accuracy(y_te, self.predict(x_te)))
         self.f1.append(compute_f1_score(y_te, self.predict(x_te)))
-        print("Epoch {}/{}: Training Loss {}".format(0, max_iters, self.loss_tr[-1]))
+        print("Epoch {}/{}: Training Loss {}".format(0, self.max_iters, self.loss_tr[-1]))
 
-        for epoch in range(1, max_iters + 1):
+        for epoch in range(1, self.max_iters + 1):
             # compute gradient
-            grad = compute_gradient(y_tr, x_tr, self.weights, "log", lambda_=lambda_)
+            grad = compute_gradient(y_tr, x_tr, self.weights, "log", lambda_=self.lambda_)
 
             # update w through the stochastic gradient update
-            self.weights = self.weights - gamma * grad
+            self.weights = self.weights - self.gamma * grad
 
             # calculate loss, accuracy and f1 score
             self.loss_tr.append(compute_loss(y_tr, x_tr, self.weights, "log"))
@@ -46,7 +49,7 @@ class Model:
             # Print progress:
             print(
                 "Epoch {}/{}: Training Loss {}".format(
-                    epoch, max_iters, self.loss_tr[-1]
+                    epoch, self.max_iters, self.loss_tr[-1]
                 )
             )
 

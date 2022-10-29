@@ -97,7 +97,7 @@ def plot_performance(model):
 
     ax1.plot(model.loss_tr)
     ax1.plot(model.loss_te)
-    ax1.set(xlabel="Epochs", ylabel="Loss")
+    ax1.set(xlabel="Epochs", ylabel="Log-loss")
     ax1.legend(["Training", "Testing"])
     ax1.axes.get_xaxis().set_visible(False)
 
@@ -106,4 +106,17 @@ def plot_performance(model):
     ax2.plot(model.f1)
     ax2.set(xlabel="Epochs", ylabel="[-]")
     ax2.legend(["Training accuracy", "Testing accuracy", "F1-score"])
+    plt.grid(True)
+    plt.show()
+
+
+def cross_validation_visualization(lambdas, loss_tr, loss_te):
+    """visualization the curves of rmse_tr and rmse_te."""
+    plt.semilogx(lambdas, loss_tr, marker=".", color='b', label='train error')
+    plt.semilogx(lambdas, loss_te, marker=".", color='r', label='test error')
+    plt.xlabel("lambda")
+    plt.ylabel("Log-loss")
+    plt.title("Cross validation")
+    plt.legend(loc=2)
+    plt.grid(True)
     plt.show()

@@ -3,7 +3,6 @@ from src.model import Model
 from src.utils import plot_performance
 from src.helpers import load_csv_data, create_csv_submission
 from src.data_processing import (
-    augment_features,
     clean_data,
     normalize_data,
     split_data,
@@ -23,15 +22,13 @@ if __name__ == "__main__":
     x_tr, x_te, y_tr, y_te = split_data(x, y, ratio=0.75)
 
     # Feature augmentation:
-    tx_tr = augment_features(x_tr)
-    tx_te = augment_features(x_te)
+    tx_tr = build_poly(x_tr, 2)
+    tx_te = build_poly(x_te, 2)
 
     # Training:
-    model = Model(np.random.uniform(-1, 1, size=tx_tr.shape[1]))
-    max_iters = 500
-    gamma = 0.1
-    lambda_ = 0.1
-    model.train(y_tr, tx_tr, y_te, tx_te, max_iters, gamma, lambda_)
+    np.random.seed(1)
+    model = Model(np.random.uniform(-1, 1, size=tx_tr.shape[1]), max_iters=500, gamma=0.1, lambda_=0.1)
+    model.train(y_tr, tx_tr, y_te, tx_te)
 
     # Plot performance:
     plot_performance(model)
