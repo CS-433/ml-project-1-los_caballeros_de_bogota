@@ -29,16 +29,16 @@ if __name__ == "__main__":
     # with open('src/best_params_2.pkl', 'rb') as f:
     #     params = pickle.load(f)
     
-    params = {'no_mass': {'jet0': {'degree':2, 'lambda_':0}, 
-                'jet1': {'degree':2, 'lambda_':0}, 
-                'jet2': {'degree':2, 'lambda_':0}, 
-                'jet3': {'degree':2, 'lambda_':0}},
-    'mass': {'jet0': {'degree':2, 'lambda_':0}, 
-            'jet1': {'degree':2, 'lambda_':0}, 
-            'jet2': {'degree':2, 'lambda_':0}, 
-            'jet3': {'degree':2, 'lambda_':0}}}
-        
-    gammas = [1e-5, 1e-5, 1e-6, 1e-6, 1e-5, 1e-6, 1e-7, 1e-7]
+    params = {'no_mass': {'jet0': {'degree':10, 'lambda_':1}, 
+                'jet1': {'degree':10, 'lambda_':1}, 
+                'jet2': {'degree':10, 'lambda_':1}, 
+                'jet3': {'degree':10, 'lambda_':1}},
+    'mass': {'jet0': {'degree':10, 'lambda_':1}, 
+            'jet1': {'degree':10, 'lambda_':1}, 
+            'jet2': {'degree':10, 'lambda_':1}, 
+            'jet3': {'degree':10, 'lambda_':1}}}
+    
+    gammas = [1e-1, 1e-1, 1e-1, 1e-1, 1e-1, 1e-1, 1e-1, 1e-1]
     i = 0
     for key1, value1 in data.items():
         for key2, value2 in value1.items():

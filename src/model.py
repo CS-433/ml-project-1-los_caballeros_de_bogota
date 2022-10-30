@@ -7,6 +7,7 @@ from src.utils import (
     compute_gradient,
     compute_accuracy,
     compute_f1_score,
+    batch_iter
 )
 
 
@@ -26,47 +27,50 @@ class Model:
         """Train model with regularized logistic regression using GD
         Args:
         """
+        
         # Feature augmentation:
+        n_feat = x_tr.shape[1]
         x_tr = build_poly(x_tr, self.degree)
         x_te = build_poly(x_te, self.degree)
         
         # Normalize data:
-        x_tr[:,x_tr.shape[1]:], self.mean, self.std = normalize_data(x_tr[:,x_tr.shape[1]:])
-        x_te[:,x_te.shape[1]:] = (x_te[:,x_te.shape[1]:] - self.mean)/self.std
+        x_tr[:,n_feat:], self.mean, self.std = normalize_data(x_tr[:,n_feat:])
+        x_te[:,n_feat:] = (x_te[:,n_feat:] - self.mean)/self.std
         
         # Initialize weights:
         np.random.seed(1)
         self.weights = np.random.uniform(-1, 1, size=x_tr.shape[1])
         
         # Initialize loss, accuracy and f1-score:
-        self.loss_tr.append(compute_loss(y_tr, x_tr, self.weights, "log"))
-        self.loss_te.append(compute_loss(y_te, x_te, self.weights, "log"))
+        self.loss_tr.append(compute_loss(y_tr, x_tr, self.weights, "log") + self.lambda_ * np.sum(self.weights**2))
+        self.loss_te.append(compute_loss(y_te, x_te, self.weights, "log") + self.lambda_ * np.sum(self.weights**2))
         self.acc_tr.append(compute_accuracy(y_tr, self.predict(x_tr)))
         self.acc_te.append(compute_accuracy(y_te, self.predict(x_te)))
         self.f1.append(compute_f1_score(y_te, self.predict(x_te)))
         print("Epoch {}/{}: Training Loss {}".format(0, self.max_iters, self.loss_tr[-1]))
 
         for epoch in range(1, self.max_iters + 1):
-            # compute gradient
-            grad = compute_gradient(y_tr, x_tr, self.weights, "log", lambda_=self.lambda_)
+            for minibatch_y, minibatch_x in batch_iter(y_tr, x_tr, batch_size=5, num_batches=1):
+                # compute gradient
+                grad = compute_gradient(minibatch_y, minibatch_x, self.weights, "log", lambda_=self.lambda_)
 
-            # update w through the stochastic gradient update
-            self.weights = self.weights - self.gamma * grad
-
-            # calculate loss, accuracy and f1 score
-            self.loss_tr.append(compute_loss(y_tr, x_tr, self.weights, "log"))
-            self.loss_te.append(compute_loss(y_te, x_te, self.weights, "log"))
-            self.acc_tr.append(compute_accuracy(y_tr, self.predict(x_tr)))
-            self.acc_te.append(compute_accuracy(y_te, self.predict(x_te)))
-            self.f1.append(compute_f1_score(y_te, self.predict(x_te)))
-
+                # update w through the stochastic gradient update
+                self.weights = self.weights - self.gamma * grad
+                
+                # calculate loss, accuracy and f1 score
+                self.loss_tr.append(compute_loss(y_tr, x_tr, self.weights, "log") + self.lambda_ * np.sum(self.weights**2))
+                self.loss_te.append(compute_loss(y_te, x_te, self.weights, "log") + self.lambda_ * np.sum(self.weights**2))
+                self.acc_tr.append(compute_accuracy(y_tr, self.predict(x_tr)))
+                self.acc_te.append(compute_accuracy(y_te, self.predict(x_te)))
+                self.f1.append(compute_f1_score(y_te, self.predict(x_te)))
+            
             # Print progress:
             print(
                 "Epoch {}/{}: Training Loss {}".format(
                     epoch, self.max_iters, self.loss_tr[-1]
                 )
             )
-
+    
     def predict(self, x, eval_mode=False):
         if eval_mode:
             x = build_poly(x, self.degree)
