@@ -30,6 +30,7 @@ if __name__ == "__main__":
         params = pickle.load(f)
     
     gammas = [1e-1, 1e-1, 1e-1, 1e-1, 1e-1, 1e-1, 1e-1, 1e-1]
+    max_iters = [2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000]
     prop = [0.104492, 0.030248, 0.011808, 0.005908, 0.29516, 0.279928, 0.189708, 0.082748]
     global_acc = 0
     global_f1 = 0
@@ -48,7 +49,7 @@ if __name__ == "__main__":
             degree = params[key1][key2]['degree']
             lambda_ = params[key1][key2]['lambda_']
             
-            model = Model(max_iters=1000, gamma=gammas[i], degree=degree, lambda_=lambda_)
+            model = Model(max_iters=max_iters[i], gamma=gammas[i], degree=degree, lambda_=lambda_)
             model.train(y_tr, x_tr, y_te, x_te)
             
             # Print performance:
@@ -65,21 +66,21 @@ if __name__ == "__main__":
     
     print("The combined models achieves {:.2f} global accuracy and {:.2f} global F1 score on test set.\n".format(global_acc, global_f1))
     
-    # # Create submission:
-    # y, x, ids = load_csv_data(DATA_PATH + "test.csv", sub_sample=False)
-    # data = filter_data(y, x, ids)
-    # y_pred = np.array([])
-    # ids_pred = np.array([])
+    # Create submission:
+    y, x, ids = load_csv_data(DATA_PATH + "test.csv", sub_sample=False)
+    data = filter_data(y, x, ids)
+    y_pred = np.array([])
+    ids_pred = np.array([])
     
-    # for key1, value1 in data.items():
-    #     for key2, value2 in value1.items():
+    for key1, value1 in data.items():
+        for key2, value2 in value1.items():
             
-    #         model = models[key1][key2]
-    #         x = data[key1][key2]['x']
+            model = models[key1][key2]
+            x = data[key1][key2]['x']
             
-    #         y_pred = np.concatenate((y_pred, model.predict(x, eval_mode=True)))
-    #         ids_pred = np.concatenate((ids_pred, data[key1][key2]['ids']))
+            y_pred = np.concatenate((y_pred, model.predict(x, eval_mode=True)))
+            ids_pred = np.concatenate((ids_pred, data[key1][key2]['ids']))
     
-    # y_pred[y_pred == 0] = -1
-    # create_csv_submission(ids_pred, y_pred, DATA_PATH + "submission.csv")
-    # print("Submission saved at 'data/submission.csv'.")
+    y_pred[y_pred == 0] = -1
+    create_csv_submission(ids_pred, y_pred, DATA_PATH + "submission.csv")
+    print("Submission saved at 'data/submission.csv'.")

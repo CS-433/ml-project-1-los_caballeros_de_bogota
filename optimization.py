@@ -53,7 +53,7 @@ def cross_validation(y, x, k_indices, k, lambda_, degree):
     y_tr = np.delete(y, k_indices[k], axis=0)
     
     # Train model:
-    model = Model(max_iters=100, gamma=0.1, degree=degree, lambda_=lambda_)
+    model = Model(max_iters=1000, gamma=0.1, degree=degree, lambda_=lambda_)
     model.train(y_tr, x_tr, y_te, x_te)
     
     # Return loss for train and test data: 
@@ -133,8 +133,8 @@ if __name__  == '__main__':
             y = data[key1][key2]['y']
             x, mean, std = normalize_data(x)
             
-            degrees =  np.arange(1,11)
-            lambdas = np.logspace(-4, 0, 10)
+            degrees =  np.arange(1,15)
+            lambdas = np.logspace(-10, 0, 10)
             best_degree, best_lambda, best_acc = best_params_selection(y, x, degrees=degrees, lambdas=lambdas, k_fold=4)
             print("The best test acc of %.3f is obtained for a degree of %.f and a lambda of %.5f.\n" % (best_acc, best_degree, best_lambda))
             
