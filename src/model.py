@@ -36,8 +36,8 @@ class Model:
         x_te[:,n_feat:] = (x_te[:,n_feat:] - self.mean)/self.std
         
         # Initialize weights:
-        np.random.seed(1)
-        self.weights = np.random.uniform(-1, 1, size=x_tr.shape[1])
+        # np.random.seed(1)
+        # self.weights = np.random.uniform(-1, 1, size=x_tr.shape[1])
         
         # Initialize loss, accuracy and f1-score:
         self.loss_tr.append(compute_loss(y_tr, x_tr, self.weights, "log") + self.lambda_ * np.sum(self.weights**2))
