@@ -1,2 +1,3 @@
-.DS_Store
-*.csv
+*.DS_Store
+test.csv
+train.csv

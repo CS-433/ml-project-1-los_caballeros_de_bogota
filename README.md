@@ -18,6 +18,8 @@
 # Getting started
 ## Project description
 ## Data
+The Dataset comes from a popular machine learning challenge recently - finding the Higgs boson - using original data from CERN. The dataset is available at https://www.aicrowd.com/challenges/epfl-machine-learning-higgs. To reproduce the results a folder 'data' as described in (#repo-architecture)
+
 ## Report
 # Reproduce results
 ## Requirements
