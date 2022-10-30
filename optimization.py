@@ -53,11 +53,11 @@ def cross_validation(y, x, k_indices, k, lambda_, degree):
     y_tr = np.delete(y, k_indices[k], axis=0)
     
     # Train model:
-    model = Model(max_iters=2, gamma=0.1, degree=degree, lambda_=lambda_)
+    model = Model(max_iters=100, gamma=0.1, degree=degree, lambda_=lambda_)
     model.train(y_tr, x_tr, y_te, x_te)
     
     # Return loss for train and test data: 
-    return model.loss_tr[-1], model.loss_te[-1]
+    return model.acc_tr[-1], model.acc_te[-1]
 
 
 def best_params_selection(y, x, degrees, k_fold, lambdas, seed = 1):
@@ -77,36 +77,36 @@ def best_params_selection(y, x, degrees, k_fold, lambdas, seed = 1):
     k_indices = build_k_indices(y, k_fold, seed)
     
     # Define lists to store the loss of training data and test data
-    final_loss_tr = np.zeros((len(degrees), len(lambdas)))
-    final_loss_te = np.zeros((len(degrees), len(lambdas)))
+    final_acc_tr = np.zeros((len(degrees), len(lambdas)))
+    final_acc_te = np.zeros((len(degrees), len(lambdas)))
     
     for i, degree in enumerate(degrees):
     # cross validation over lambdas and degrees:
         for j, lambda_ in enumerate(lambdas):
             
-            loss_tr_k = []
-            loss_te_k = []
+            acc_tr_k = []
+            acc_te_k = []
             for k in range(k_fold):
-                loss_tr, loss_te = cross_validation(y, x, k_indices, k, lambda_, degree)
-                loss_tr_k.append(loss_tr)
-                loss_te_k.append(loss_te)
+                acc_tr, acc_te = cross_validation(y, x, k_indices, k, lambda_, degree)
+                acc_tr_k.append(acc_tr)
+                acc_te_k.append(acc_te)
             
-            final_loss_tr[i,j] = np.mean(loss_tr_k)
-            final_loss_te[i,j] = np.mean(loss_te_k)
+            final_acc_tr[i,j] = np.mean(acc_tr_k)
+            final_acc_te[i,j] = np.mean(acc_te_k)
     
-    min_idx = np.unravel_index(final_loss_te.argmin(), final_loss_te.shape)
-    best_degree = degrees[min_idx[0]]
-    best_lambda = lambdas[min_idx[1]]
-    best_loss = np.min(final_loss_te) 
+    max_idx = np.unravel_index(final_acc_te.argmax(), final_acc_te.shape)
+    best_degree = degrees[max_idx[0]]
+    best_lambda = lambdas[max_idx[1]]
+    best_acc = np.max(final_acc_te) 
     
-    return best_degree, best_lambda, best_loss
+    return best_degree, best_lambda, best_acc
 
 
 if __name__  == '__main__':
     # Load and prepare data for training:
     y, x, ids= load_csv_data(DATA_PATH + "train.csv", sub_sample=True)
     y[y == -1] = 0
-    
+
     data = filter_data(y, x, ids)
     models = {'no_mass': {'jet0': [], 
                 'jet1': [], 
@@ -116,7 +116,7 @@ if __name__  == '__main__':
             'jet1': [], 
             'jet2': [], 
                 'jet3': []}}
-    
+
     params = {'no_mass': {'jet0': {'degree':[], 'lambda_':[]}, 
                     'jet1': {'degree':[], 'lambda_':[]}, 
                     'jet2': {'degree':[], 'lambda_':[]}, 
@@ -125,7 +125,7 @@ if __name__  == '__main__':
                 'jet1': {'degree':[], 'lambda_':[]}, 
                 'jet2': {'degree':[], 'lambda_':[]}, 
                 'jet3': {'degree':[], 'lambda_':[]}}}
-    
+
     for key1, value1 in data.items():
         for key2, value2 in value1.items():
             print('Cross-validation for model {}-{}:'.format(key1, key2))
@@ -133,14 +133,14 @@ if __name__  == '__main__':
             y = data[key1][key2]['y']
             x, mean, std = normalize_data(x)
             
-            degrees =  np.arange(1,3)
-            lambdas = np.logspace(-4, 0, 3)
-            best_degree, best_lambda, best_loss = best_params_selection(y, x, degrees=degrees, lambdas=lambdas, k_fold=4)
-            print("The best test loss of %.3f is obtained for a degree of %.f and a lambda of %.5f.\n" % (best_loss, best_degree, best_lambda))
+            degrees =  np.arange(1,11)
+            lambdas = np.logspace(-4, 0, 10)
+            best_degree, best_lambda, best_acc = best_params_selection(y, x, degrees=degrees, lambdas=lambdas, k_fold=4)
+            print("The best test acc of %.3f is obtained for a degree of %.f and a lambda of %.5f.\n" % (best_acc, best_degree, best_lambda))
             
             params[key1][key2]['degree'] = best_degree
             params[key1][key2]['lambda_'] = best_lambda
-    
+
     with open('src/best_params.pkl', 'wb') as f:
         pickle.dump(params, f)
     print("Best parameters saved at 'src/best_params.pkl'.")
