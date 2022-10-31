@@ -145,11 +145,7 @@ def logistic_regression(y, tx, initial_w, max_iters, gamma):
         loss = compute_loss(y, tx, w, "log")
 
         # Display current loss
-        print(
-            "GD iter. {bi}/{ti}: loss={l}".format(
-                bi=i, ti=max_iters - 1, l=loss
-            )
-        )
+        print("GD iter. {bi}/{ti}: loss={l}".format(bi=i, ti=max_iters - 1, l=loss))
     return w, loss
 
 

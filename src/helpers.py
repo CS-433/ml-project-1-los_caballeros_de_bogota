@@ -27,8 +27,8 @@ def create_csv_submission(ids, y_pred, name):
     """
     Creates an output file in .csv format for submission to Kaggle or AIcrowd
     Arguments: ids (event ids associated with each prediction)
-               y_pred (predicted class labels)
-               name (string name of .csv output file to be created)
+                y_pred (predicted class labels)
+                name (string name of .csv output file to be created)
     """
     with open(name, "w") as csvfile:
         fieldnames = ["Id", "Prediction"]
