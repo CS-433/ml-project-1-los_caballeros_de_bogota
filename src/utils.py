@@ -118,7 +118,7 @@ def batch_iter(y, tx, batch_size=1, num_batches=1, shuffle=True):
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
 
 
-def plot_performance(model):
+def plot_performance(model, title):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 8), sharex=True)
 
     ax1.plot(model.loss_tr)
@@ -134,4 +134,5 @@ def plot_performance(model):
     ax2.set(xlabel="Epochs", ylabel="[-]")
     ax2.legend(["Training accuracy", "Testing accuracy", "F1-score"])
     ax2.grid(True)
+    fig.suptitle(title)
     plt.show()
