@@ -79,3 +79,4 @@ The performances of the models is assessed on AirCrowd from `data/submission.csv
 Here are he performance of each sub model during the training:
 
 [![IMAGE ALT TEXT HERE](https://github.com/CS-433/ml-project-1-los_caballeros_de_bogota/blob/main/figures/mass.jpeg)](https://github.com/CS-433/ml-project-1-los_caballeros_de_bogota/blob/main/figures)
+[![IMAGE ALT TEXT HERE](https://github.com/CS-433/ml-project-1-los_caballeros_de_bogota/blob/main/figures/no_mass.jpeg)](https://github.com/CS-433/ml-project-1-los_caballeros_de_bogota/blob/main/figures)
