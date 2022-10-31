@@ -6,7 +6,7 @@ from src.utils import plot_performance
 DATA_PATH = "data/"
 
 if __name__ == '__main__':
-    with open('src/best_models_15000.pkl', 'rb') as f:
+    with open('src/best_models.pkl', 'rb') as f:
         models = pickle.load(f)
 
     prop = [0.104492, 0.030248, 0.011808, 0.005908, 0.29516, 0.279928, 0.189708, 0.082748]
