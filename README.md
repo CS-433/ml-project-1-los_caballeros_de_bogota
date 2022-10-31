@@ -79,3 +79,5 @@ The performances of the models is assessed on AirCrowd from `data/submission.csv
 Here are he performance of each sub model during the training:
 
 [![IMAGE ALT TEXT HERE](https://github.com/TemryL/Noise2Noise/blob/main/results.png)](https://github.com/TemryL/Noise2Noise/blob/main)
+
+[![IMAGE ALT TEXT HERE](https://github.com/TemryL/Noise2Noise/blob/main/results.png)](https://github.com/TemryL/Noise2Noise/blob/main)
